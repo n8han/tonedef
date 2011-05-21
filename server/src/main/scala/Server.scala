@@ -6,15 +6,23 @@ import unfiltered.response._
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.channel.{ChannelFuture, ChannelFutureListener}
 import org.jboss.netty.channel.group.{DefaultChannelGroup, ChannelGroupFuture, ChannelGroup}
-import org.jboss.netty.handler.codec.http.{HttpHeaders,DefaultHttpChunk}
+import org.jboss.netty.handler.codec.http.{
+  HttpHeaders,DefaultHttpChunk, DefaultHttpChunkTrailer}
 import org.clapper.avsl.Logger
 
 /** unfiltered plan */
-class App extends unfiltered.netty.channel.Plan {
+object App extends unfiltered.netty.channel.Plan {
   import QParams._
 
-  val logger = Logger(classOf[App])
+  val logger = Logger(App.getClass)
   @volatile private var channels = Map.empty[String, ChannelGroup]
+
+  def shutdown() {
+    logger.info("Shutting down")
+    channels.values.foreach { cg =>
+      cg.write(new DefaultHttpChunkTrailer).await()
+    }
+  }
 
   def channel(name: String) = channels.getOrElse(name, {
     val cg = new DefaultChannelGroup
@@ -66,6 +74,11 @@ object Server {
   
   def main(args: Array[String]) {
     logger.info("starting unfiltered app at localhost on port %s" format 8080)
-    unfiltered.netty.Http(8080).handler(new App).run
+    unfiltered.netty.Http(8080)
+      .handler(App)
+      .beforeStop {
+        App.shutdown()
+      }
+      .run
   }
 }
