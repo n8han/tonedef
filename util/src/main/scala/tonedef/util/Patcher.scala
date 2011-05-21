@@ -6,6 +6,8 @@ class Patcher {
   def patch(original: JObject, diff: JObject): JValue = {
     import net.liftweb.json.JsonDSL._
     val merged = original merge diff
-    merged
+    merged transform {
+      case JField(x, JNull) => JField(x, JNothing)
+    }
   }
 }

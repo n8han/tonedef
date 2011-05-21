@@ -9,7 +9,8 @@ class PatcherSpec extends Specification {
       val patcher = new Patcher()
       val after = patcher patch(original, diff)
       val s = compact(render(after))
-      s must =~ (".*5.*")
+      s must =~ (""".*5.*""")
+      s must not =~ (""".*"1":{"tone".*""")
     }
   }
 
@@ -19,6 +20,7 @@ class PatcherSpec extends Specification {
       ("tracks" ->
         ("0" ->
           ("notes" ->
+            ("1" -> JNull) ~
             ("5" ->
               ("tone" -> 4)
             )
