@@ -1,0 +1,70 @@
+
+// original
+{ "music": {
+	"name": "",
+	"tracks": {
+		"0": {
+			"active": true,
+			"instrument": "piano",
+			"notes": {
+			    "1":{
+					"tone":0, // note	 
+			    },
+				//offset is the key
+				"0": {
+					"tone":3, // note
+					"duration":3
+				}
+			}
+	
+		},
+		"1": {
+		}
+	} // tracks
+}}
+
+----
+
+// diff 1
+{ "music": {
+		"tracks": {
+			"0": {
+				"notes": {
+					"5": {
+						"tone": 4
+					}
+				}
+			}
+		}
+
+	}
+}
+----
+
+// diff 2
+{ "music": {
+		"tracks": {
+			"0": {
+				"notes": {
+					"5": {
+					}
+				}
+			}
+		}
+
+	}
+}
+-----
+
+// diff 3
+{ "music": {
+		"tracks": {
+			"0": {
+				"instrument": "organ"
+			}
+		}
+
+	}
+}
+
+
