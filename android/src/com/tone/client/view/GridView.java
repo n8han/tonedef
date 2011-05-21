@@ -54,8 +54,8 @@ public class GridView extends View implements OnTouchListener {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		System.out.println("drawing grid view " + xTotal + "," + yTotal);
-		System.out.println("width/height:" + getWidth() + "," + getHeight());
+//		System.out.println("drawing grid view " + xTotal + "," + yTotal);
+//		System.out.println("width/height:" + getWidth() + "," + getHeight());
 		Paint paint = new Paint();		
 		if(xTotal!=0 && yTotal!=0) {
 			float rectWidth = getWidth() / xTotal;
@@ -118,7 +118,7 @@ public class GridView extends View implements OnTouchListener {
 			height = padding;
 			width = width + rectWidth + padding;
 		}
-		System.out.println("not found");
+		//System.out.println("not found");
 		return null;
 	}
 

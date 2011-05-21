@@ -7,13 +7,17 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout.LayoutParams;
 
+import com.tone.client.network.TonedefService;
+import com.tone.client.network.TonedefService.StatusListener;
 import com.tone.client.view.GridView;
 import com.tone.client.view.SlideView;
 
-public class ToneActivity extends Activity {
+public class ToneActivity extends Activity implements StatusListener {
 	
 	private SlideView slideView;
 	private GridView gridView;
+	
+	private TonedefService service;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,5 +63,20 @@ public class ToneActivity extends Activity {
 			}
         	
         }.start();
+        new Thread() {
+
+			@Override
+			public void run() {
+				service = new TonedefService();
+				service.addListener(ToneActivity.this);
+				service.start("foo");
+			}
+        	
+        }.start();
     }
+
+	@Override
+	public void onUpdate(Object status) {
+		System.out.println(status);
+	}
 }
