@@ -1,4 +1,4 @@
-package tones
+package tonedef
 
 import unfiltered.request._
 import unfiltered.response._
