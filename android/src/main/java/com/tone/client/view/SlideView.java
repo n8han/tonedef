@@ -23,7 +23,10 @@ public class SlideView extends View {
 		Paint paint = new Paint();
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(4);
-		canvas.drawLine((notePosition*rectWidth), 0, (notePosition*rectWidth), getHeight(), paint);
+		float dx = notePosition+rectWidth;
+		canvas.translate(dx, 0);
+		canvas.drawLine(0, 0,0, getHeight(), paint);
+		
 	}
 
 	public float getRectWidth() {

@@ -1,8 +1,10 @@
 package com.tone.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
+import tonedef.util.Music;
+import tonedef.util.Note;
 import tonedef.util.Track;
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,7 +26,10 @@ public class ToneActivity extends Activity implements StatusListener {
 	
 	private TonedefService service;
 	
-	private Map<Integer,Track> trackers = new HashMap<Integer,Track>();
+	private Track showingTrack;
+	
+	private Music music;
+	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,8 +40,13 @@ public class ToneActivity extends Activity implements StatusListener {
         Display display = getWindowManager().getDefaultDisplay();
         LayoutParams layout = new LayoutParams(display.getWidth(),display.getHeight());
         layout.width = LayoutParams.FILL_PARENT;
-        layout.height = LayoutParams.FILL_PARENT;        
-        slideView = new SlideView(this);
+        layout.height = LayoutParams.FILL_PARENT;
+        music = new Music("foo", new HashMap<String,Track>());
+        showingTrack = new Track(true,"0",new HashMap<String,Note>());
+        music.tracks.put("0", showingTrack);
+        slideView = new SlideView(this) {
+        	
+        };
         
         grid = new GridView(this) {
 
@@ -44,6 +54,53 @@ public class ToneActivity extends Activity implements StatusListener {
 			protected void onRectChange() {
 				slideView.setRectWidth(getRectWidth());
 				slideView.setRectHeight(getRectHeight());
+			}
+			
+			@Override
+			protected void onAdd(final int[] data) {
+				Note note = showingTrack.notes.get(String.valueOf(data[0]));
+				if(note==null) {
+					note = new Note(new ArrayList<Integer>(),1);
+					showingTrack.notes.put(String.valueOf(data[1]), note);
+				}
+				final Note myNote = note;
+				if(!note.tones.contains(data[1])) {
+					note.tones.add(data[1]);
+				}
+				new Thread() {
+					public void run() {
+						Music diff = new Music(music.name, new HashMap<String,Track>());
+						Track diffT = new Track(showingTrack.active, showingTrack.instrument, new HashMap<String,Note>());
+						diff.tracks.put("0", diffT);						
+						diffT.notes.put(String.valueOf(data[0]), myNote);
+						HashMap<String,Object> m = new HashMap<String,Object>();
+						m.put("music", diff);
+						service.push(m);
+					};
+				}.start();
+			}
+			
+			@Override
+			protected void onRemove(final int[] data) {				
+				Note note = showingTrack.notes.get(String.valueOf(data[1]));
+				if(note==null) {
+					return;
+				}
+				int index=note.tones.indexOf(data[1]);
+				if(index>=0) {
+					note.tones.remove(index);
+				}
+				new Thread() {
+					public void run() {
+						Music diff = new Music(music.name, new HashMap<String,Track>());
+						Track diffT = new Track(showingTrack.active, showingTrack.instrument, new HashMap<String,Note>());
+						diff.tracks.put("0", diffT);						
+						diffT.notes.put(String.valueOf(data[0]), null);
+						HashMap<String,Object> m = new HashMap<String,Object>();
+						m.put("music", diff);
+						service.push(m);
+					};
+				}.start();
 			}
         	
         };
@@ -56,13 +113,15 @@ public class ToneActivity extends Activity implements StatusListener {
 			@Override
 			public void run() {
 				float notePosition = 0;
+				long sleep = 100;
 				while(true) {
 					slideView.setNotePosition(notePosition);
 					slideView.refreshDrawableState();
 					slideView.postInvalidate();
-					notePosition++;
+					//TODO: this needs to figure out the width to second and then make it 100.
+					notePosition+=(int)1000/sleep;
 					try {
-						Thread.sleep(100);
+						Thread.sleep(sleep);
 					} catch (InterruptedException e) {
 					}
 				}
