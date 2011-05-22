@@ -146,12 +146,33 @@ public class GridView extends View implements OnTouchListener {
 		return false;
 	}
 	
+	public void initialize() {
+		selected.clear();
+	}
+	
 	protected void onRemove(int[] data) {
 		
 	}
 	
 	protected void onAdd(int[] data) {
 		
+	}
+	
+	public void add(int[] data) {
+		Set<Integer> set = selected.get(data[0]);
+		if(set==null) {
+			set = new LinkedHashSet<Integer>();
+			selected.put(data[1], set);
+		}
+		set.add(data[1]);
+	}
+	
+	public void remove(int[] data) {
+		Set<Integer> set = selected.get(data[0]);
+		if(set==null) {
+			return;
+		}
+		set.remove(data[1]);		
 	}
 
 }

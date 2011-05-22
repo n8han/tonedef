@@ -26,7 +26,7 @@ public class TonedefService {
 
 	public interface StatusListener {
 		
-		void onUpdate(Object status);
+		void onUpdate(String jsonStatus);
 		
 	}
 
@@ -99,7 +99,7 @@ public class TonedefService {
     	}
     }
     
-    private void onUpdate(Object status) {
+    private void onUpdate(String status) {
     	for(StatusListener l : listeners) {
     		l.onUpdate(status);
     	}

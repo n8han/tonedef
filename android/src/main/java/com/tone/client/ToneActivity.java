@@ -12,6 +12,8 @@ import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout.LayoutParams;
+import tonedef.util.Patcher;
+import java.util.Map;
 
 import com.tone.client.audio.AudioTool;
 import com.tone.client.network.TonedefService;
@@ -58,6 +60,9 @@ public class ToneActivity extends Activity implements StatusListener {
 			
 			@Override
 			protected void onAdd(final int[] data) {
+				if(showingTrack==null) {
+					return;
+				}
 				Note note = showingTrack.notes.get(String.valueOf(data[0]));
 				if(note==null) {
 					note = new Note(new ArrayList<Integer>(),1);
@@ -144,8 +149,26 @@ public class ToneActivity extends Activity implements StatusListener {
     
     private AudioTool tool;
 
+	private Patcher patcher = new Patcher();
+
 	@Override
-	public void onUpdate(Object status) {
-		System.out.println("whoop");
+	public void onUpdate(String jsonUpdate) {
+		music = patcher.patchMusic(music, jsonUpdate);
+		System.out.println("merged");
+		grid.initialize();
+		showingTrack = music.tracks.get("0");
+		if(showingTrack==null) {
+			
+		} else {
+		for(Map.Entry<String,Note> entry : showingTrack.notes.entrySet()) {
+			int id = Integer.parseInt(entry.getKey());
+			Note note = entry.getValue();
+			for(int i = 0; i < note.tones.size(); i++) {
+				int[] data = new int[] {id,note.tones.get(i)};
+				grid.add(data);
+			}
+		}
+		}
+		grid.postInvalidate();
 	}
 }
