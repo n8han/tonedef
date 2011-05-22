@@ -6,10 +6,16 @@ import java.util.LinkedHashSet;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import java.util.Map;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.HttpVersion;
 
 import tonedef.util.Music;
 import tonedef.util.Parser;
@@ -47,7 +53,7 @@ public class TonedefService {
     }
 
     public void start(String id) {
-    	try {
+        try {
 	    	URL u = new URL("http://10.11.254.241:8080/channel/foo");
 			stream = u.openStream();    
 			while (true) {
@@ -73,21 +79,21 @@ public class TonedefService {
 			}
     	} catch(Exception e) {
     		e.printStackTrace();
-    	}
+            }
     }
     
     Gson gson = new Gson();
     
     public void push(Object obj) {
     	try {
-    		HttpPost p = new HttpPost("http://10.11.254.241:8080/channel/foo");
-			Map m = (Map)obj;
-    		p.setEntity(new StringEntity(gson.toJson(m)));		
-
-            HttpClient client = new DefaultHttpClient();
-	    	HttpResponse resp = client.execute(p);
-	    	resp.getEntity().consumeContent();
-	    	
+    		HttpPost p = new HttpPost("http://10.11.254.241:8080/channel/foo");		
+            p.setEntity(new StringEntity(gson.toJson(obj)));
+            p.setHeader("Content-type", "application/json");
+            BasicHttpParams params = new BasicHttpParams();
+            params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+            HttpClient client = new DefaultHttpClient(params);
+            BasicResponseHandler responseHandler = new BasicResponseHandler();
+	    	String resp = client.execute(p, responseHandler);	    	
     	}catch(Exception e) {
     		e.printStackTrace();
     	}
