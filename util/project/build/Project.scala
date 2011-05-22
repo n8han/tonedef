@@ -1,6 +1,14 @@
 import sbt._
 
-class Project(info: ProjectInfo) extends DefaultProject(info) with assembly.AssemblyBuilder {
+class Project(info: ProjectInfo) extends DefaultProject(info) with assembly.AssemblyBuilder with ProguardProject {
+  override def proguardInJars = super.proguardInJars +++ scalaLibraryPath
+  override def proguardOptions = "-dontoptimize" :: "-dontobfuscate" :: proguardKeepAllScala :: proguardKeepMain("*") :: Nil
+
+  override def ivyXML =
+    <dependencies>
+      <exclude module="paranamer"/>
+    </dependencies>
+
   val lift_json = "net.liftweb" %% "lift-json" % "2.3"
   val specs2 = "org.specs2" %% "specs2" % "1.3" % "test"
   val scalaz = "org.specs2" %% "scalaz-core" % "5.1-SNAPSHOT" % "test"

@@ -28,13 +28,17 @@ class Parser {
 
   def parseTrack(json: JValue): Track = {
     import scala.collection.JavaConversions._
+    val active: Boolean = (for {
+      JField("active", JBool(active)) <- json
+    } yield active).headOption getOrElse {false}
+
     val notes = Map((for {
       JObject(notes) <- json \ "notes"
       JField(noteKey, JObject(note)) <- notes
     } yield (noteKey, note)) map { case (key, value) =>
       (key, parseNote(JObject(value)))
     } :_*)
-    new Track(notes)
+    new Track(active, "", notes)
   }
 
   def parseNote(json: JValue): Note = {
