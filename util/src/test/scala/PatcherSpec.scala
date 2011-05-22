@@ -5,6 +5,16 @@ import scala.collection.JavaConversions._
 import tonedef.util.{Jsoner, Parser, Patcher, Note}
 
 class PatcherSpec extends Specification {
+  "the jsoner" should {
+    val jsoner = new Jsoner()
+    val parser = new Parser()
+    "preserve data" in {
+      val music = parser.parse(ryansStuff)
+      val js = jsoner.toJson(music)
+      js must_== """{"music":{"name":"foo","tracks":{"0":{"active":true,"instrument":"0","notes":{"5":{"tones":[5],"duration":1}}}}}}"""
+    }
+  }
+
   "the parser" should {
     val parser = new Parser()
     "parse string" in {
@@ -30,16 +40,26 @@ class PatcherSpec extends Specification {
   "the patcher" should {
     import net.liftweb.json.compact
     val patcher = new Patcher()
-    val after = patcher patchJson(original, diff)
-    val s = compact(render(after))
-    println(s)
 
     "merge a patch into an existing music" in {
+      val after = patcher patchJson(original, diff)
+      val s = compact(render(after))
       s must =~ (""".*5.*""")
     }
 
     "delete a note when tones are empty" in {
+      val after = patcher patchJson(original, diff)
+      val s = compact(render(after))
+      println(s)
       s must not =~ (""".*"1":\{"tones".*""")
+    }
+
+    "merge into music" in {
+      val jsoner = new Jsoner()
+      val parser = new Parser()
+      val music = parser.parseMusic(original)
+      val merged = patcher.patchMusic(music, diffString)
+      merged.tracks.size must_== 1
     }
   }
 
@@ -101,4 +121,16 @@ class PatcherSpec extends Specification {
           }
         }
       } } }}"""
+
+  def diffString = """{ "music": {
+    "tracks": {
+        "0": {
+          "notes": {
+            "5": {
+              "tones": [4]
+            }
+          }
+        }
+      }
+     }}"""
 }

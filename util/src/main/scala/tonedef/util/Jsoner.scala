@@ -1,7 +1,7 @@
 package tonedef.util
 
-import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonAST
+import net.liftweb.json.JsonAST._
 
 class Jsoner {
   def toJson(m: Music): String = {
@@ -15,9 +15,12 @@ class Jsoner {
     ("music" ->
       ("name" -> (if (that.name == "") None else Some(that.name))) ~
       ("tracks" ->
-        JsonAST.concat(that.tracks.toList map { case (key, value) =>
-          JField(key, trackToJson(value))
-        }: _*)
+        {
+          val tracks = that.tracks.toList map { case (key, value) =>
+            JField(key, trackToJson(value))
+          }
+          JObject(tracks)
+        }
     )) // music
   }
 
@@ -27,9 +30,13 @@ class Jsoner {
     ("active" -> that.active) ~
     ("instrument" -> that.instrument) ~
     ("notes" ->
-      JsonAST.concat(that.notes.toList map { case (key, value) =>
-        JField(key, noteToJson(value))
-      }: _*)) // notes
+      {
+        val notes = that.notes.toList map { case (key, value) =>
+          JField(key, noteToJson(value))
+        }
+        JObject(notes)
+      }
+    ) // notes
   }
 
   def noteToJson(that: Note): JValue = {
