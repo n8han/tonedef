@@ -7,6 +7,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout.LayoutParams;
 
+import com.tone.client.audio.AudioTool;
 import com.tone.client.network.TonedefService;
 import com.tone.client.network.TonedefService.StatusListener;
 import com.tone.client.view.GridView;
@@ -51,7 +52,6 @@ public class ToneActivity extends Activity implements StatusListener {
 				int notePosition = 0;
 				while(true) {
 					slideView.setNotePosition(notePosition);
-					System.out.println("set note position");
 					slideView.refreshDrawableState();
 					slideView.postInvalidate();
 					notePosition++;
@@ -67,13 +67,17 @@ public class ToneActivity extends Activity implements StatusListener {
 
 			@Override
 			public void run() {
+				tool = new AudioTool(ToneActivity.this);
 				service = new TonedefService();
 				service.addListener(ToneActivity.this);
 				service.start("foo");
 			}
         	
         }.start();
+        
     }
+    
+    private AudioTool tool;
 
 	@Override
 	public void onUpdate(Object status) {

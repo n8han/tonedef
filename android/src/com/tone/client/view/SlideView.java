@@ -19,7 +19,7 @@ public class SlideView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {	
 		super.onDraw(canvas);
-		System.out.println("drawing canvas k" + notePosition);
+		//System.out.println("drawing canvas k" + notePosition);
 		Paint paint = new Paint();
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(4);

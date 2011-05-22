@@ -25,6 +25,11 @@
 			<version>${android.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.eed3si9n</groupId>
+			<artifactId>tonedef-assembly</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
