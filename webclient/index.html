@@ -37,7 +37,7 @@
           conf['tones'] = conf['tones'] || 12;
           conf['host'] = conf['host'] || 'ws://localhost:8080/';
           conf['solo'] = conf['solo'] || 'solo';
-          var chan = null, mytrk = +new Date();
+          var chan = null, mytrk = '0';//+new Date();
           var T = { /* templates */
               note: function(t, n) { /* a note is an instance of tone within a track */
               return ['<li class="n-'

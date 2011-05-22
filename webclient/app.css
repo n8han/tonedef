@@ -24,7 +24,7 @@ h1 span { color:#FC00A0; }
     -o-transition:background .25s ease-in;
     transition:background .25s ease-in;
 }
-ul { display:block; margin:.25em 0; list-style:none;}
+ul { display:block; margin:.25em 0; list-style:none; }
 .track p {
     font-weight:bold;
 
