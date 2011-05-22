@@ -42,6 +42,9 @@ class Parser {
     val active: Boolean = (for {
       JField("active", JBool(active)) <- json
     } yield active).headOption getOrElse {false}
+    val instrument: String = (for {
+      JField("instrument", JString(instrument)) <- json
+    } yield instrument).headOption getOrElse {""}
 
     val notes = mutable.Map((for {
       JObject(notes) <- json \ "notes"
@@ -49,7 +52,7 @@ class Parser {
     } yield (noteKey, note)) map { case (key, value) =>
       (key, parseNote(JObject(value)))
     } :_*)
-    new Track(active, "", notes)
+    new Track(active, instrument, notes)
   }
 
   def parseNote(json: JValue): Note = {

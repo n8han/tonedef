@@ -10,4 +10,13 @@ public class Music {
     name = a_name;
     tracks = a_tracks;
   }
+
+  public String toString() {
+    String tracksString = "Tracks(";
+    for (Map.Entry<String, Track> entry: tracks.entrySet()) {
+      tracksString += entry.getKey() + " -> " + entry.getValue() + ",";
+    }
+    tracksString += ")";
+    return String.format("Music(%s, %s)", name, tracksString);
+  }
 }
