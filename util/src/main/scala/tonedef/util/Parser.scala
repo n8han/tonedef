@@ -42,14 +42,17 @@ class Parser {
   }
 
   def parseNote(json: JValue): Note = {
-    val tone = for {
-      JField("tone", JInt(tone)) <- json
-    } yield tone
+    import java.lang.{Integer => JLInteger}
+    import scala.collection.JavaConversions._
+    val tones = for {
+      JField("tones", JArray(tones)) <- json
+      JInt(tone) <- tones
+    } yield new JLInteger(tone.toInt)
 
     val duration = for {
       JField("duration", JInt(duration)) <- json
     } yield duration
 
-    new Note(tone.head.toInt, duration.headOption map {_.toInt} getOrElse {1})
+    new Note(tones, duration.headOption map {_.toInt} getOrElse {1})
   }
 }
