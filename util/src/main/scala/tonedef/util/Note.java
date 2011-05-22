@@ -7,4 +7,8 @@ public class Note {
     tone = a_tone;
     duration = a_duration;
   }
+
+  public String toString() {
+    return String.format("Note(%d, %d)", tone, duration);
+  }
 }
