@@ -1,8 +1,11 @@
 * { margin:0; padding:0; }
-body { font-size:18px; }
+body { font-size:18px; font-family:helvetica neue, helvetica, arial, sans serif; }
 #container { width:720px; margin:0 auto; text-align:center; }
 #music ul li { float:left; }
-h1 { font-family: 'Corben', arial, serif; text-shadow:#ddd 4px 4px 4px; }
+h1 { font-family: 'VT323', 'Cabin Sketch', arial, serif; text-shadow:#ddd 4px 4px 4px; font-size:120px; }
+h1 span { color:#FC00A0; }
+#info { background:#333; color:#eee; padding:1em 0; display:none; width:100%; text-align:center;}
+
 .s {
     height:40px; width:40px;
     background:#ccc; margin:.25em;
@@ -14,13 +17,13 @@ h1 { font-family: 'Corben', arial, serif; text-shadow:#ddd 4px 4px 4px; }
     -o-transition:background .25s ease-in;
     transition:background .25s ease-in;
 }
-/*.s:hover {
+.s:hover {
     background:#eee;
     -webkit-transition:background .25s ease-in;
     -moz-transition:background .25s ease-in;
     -o-transition:background .25s ease-in;
     transition:background .25s ease-in;
-}*/
+}
 ul { display:block; margin:.25em 0; }
 .track p {
     font-weight:bold;
