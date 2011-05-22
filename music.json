@@ -7,12 +7,12 @@
 			"active": true,
 			"instrument": "piano",
 			"notes": {
-			    "1":{
-					"tone":0, // note	 
+			  "1":{
+					"tones": [0, 1], // note	 
 			    },
 				//offset is the key
 				"0": {
-					"tone":3, // note
+					"tones": [3], // note
 					"duration":3
 				}
 			}
@@ -31,7 +31,7 @@
 			"0": {
 				"notes": {
 					"5": {
-						"tone": 4
+						"tones": [4]
 					}
 				}
 			}
@@ -41,12 +41,14 @@
 }
 ----
 
-// diff 2
+// diff 2 
 { "music": {
 		"tracks": {
 			"0": {
 				"notes": {
-					"5": null
+					"5": {
+					  "tones": []
+					}
 				}
 			}
 		}
