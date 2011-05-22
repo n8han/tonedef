@@ -146,6 +146,6 @@ public class ToneActivity extends Activity implements StatusListener {
 
 	@Override
 	public void onUpdate(Object status) {
-		System.out.println(status);
+		System.out.println("whoop");
 	}
 }

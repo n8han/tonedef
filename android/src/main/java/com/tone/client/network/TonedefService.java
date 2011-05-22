@@ -9,7 +9,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import java.util.Map;
 
+import tonedef.util.Music;
 import tonedef.util.Parser;
 
 import com.google.gson.Gson;
@@ -55,7 +57,13 @@ public class TonedefService {
 				}
 				char c = (char) k;
 				if (c == '\n') {
-					Object o = parser.parse(b.toString());
+					try {
+						System.out.println(b.toString());
+						Music o = parser.parse(b.toString());
+						System.out.println(o.name);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					onUpdate(b.toString());
 					
 					b.setLength(0);
@@ -73,7 +81,8 @@ public class TonedefService {
     public void push(Object obj) {
     	try {
     		HttpPost p = new HttpPost("http://10.11.254.241:8080/channel/foo");
-    		p.setEntity(new StringEntity(gson.toJson(obj)));
+			Map m = (Map)obj;
+    		p.setEntity(new StringEntity(gson.toJson(m)));		
 
             HttpClient client = new DefaultHttpClient();
 	    	HttpResponse resp = client.execute(p);
