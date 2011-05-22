@@ -2,7 +2,6 @@ package tonedef.util
 
 import net.liftweb.json.JsonAST._
 import scala.collection.mutable
-import javax.swing.JList
 
 class Parser {
   def parse(s: String): Music = {
