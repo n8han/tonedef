@@ -246,7 +246,7 @@
                document.onkeypress = function(evt) {
                   var tone = ToneMap[evt.keyCode];
                   if(tone != undefined) {
-                      var el = $("#trk-", mytrk, " #t-" + tone + " .n-" + n)
+                      var el = $("#trk-" + mytrk + " #t-" + tone + " .n-" + n)
                       , play = el.hasClass('play');
                       if(chan == conf['solo']) {
                           if(play) el.removeClass("play");
