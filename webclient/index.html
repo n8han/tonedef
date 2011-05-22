@@ -215,8 +215,15 @@
                   }
               });
 
-              var n = 0
-              var i = setInterval(function(){
+              $(".track p").live('click', function(e) {
+                  var tones = $(this).parent().find("ul");
+                  if(tones) {
+                      if(tones.is(":visible")) tones.fadeOut("slow");
+                      else tones.fadeIn("flow");
+                  }
+              });
+              var n = 0;
+              var i = setInterval(function() {
                   n++;
                   $(".n-"+n).addClass("on");
                   $(":not(.n-"+n+")").removeClass("on");
