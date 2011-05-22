@@ -1,0 +1,129 @@
+<!DOCYTPE html>
+<html>
+  <head>
+    <title></title>
+    <style type="text/css">
+      * { margin:0; padding:0; }
+      #music ul li { float:left; }
+      .s {
+          height:40px; width:40px; background:#ccc; margin:.25em;
+          -webkit-border-radius: 10px;
+          -moz-border-radius: 10px;
+          border-radius: 10px;
+      }
+      ul { display:block; margin:.25em 0;}
+      .on { background:#00FDFD; }
+      .play { background:#FC00A0; }
+      .clearfix:after {
+          content: ".";
+          display: block;
+          height: 0;
+          clear: both;
+          visibility: hidden;
+      }
+    </style>
+    <script type="text/javascript" src="jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <h1>tonedef</h1>
+      <div id="music">
+      </div>
+    </div>
+    <div id="audio">
+      <!--<audio id="a"><source src="song.mp3" type="audio/mpeg" /></audio>-->
+    </div>
+    <script type="text/javascript">
+      var M = (function($, conf) {
+          var conf = conf || {};
+          conf['time'] = conf['time'] || 8;
+          var T = {
+              note: function(n) {
+                  return ['<li class="n-'
+                          , n
+                          , ' s"></li>'].join('');
+              },
+              track: function(id) {
+                  var n = conf['time'], buffer = [];
+                  while(n--) buffer.push(T.note(n));
+                  return ['<ul class="clearfix" id="t-'
+                          , id
+                          , '">'
+                          , buffer.reverse().join('')
+                          ,'</ul>'].join('');
+              }
+          }
+          , initTracks = function(sel, n) {
+              var buff = [];
+              while(n--) buff.push(T.track(n));
+              $(sel).append(buff.reverse().join(''));
+          }
+          , idFromCls = function(jqel, re) {
+              return parseInt(jqel.attr("class").split(' ').filter(function(c) {
+                  return re.test(c); })[0].split('-')[1]);
+          }
+          , notify = function(jqel, play) {
+              var tone = idFromCls(jqel, /n-(\d+)/)
+              , note = parseInt(jqel.parent().attr("id").split("-")[1])
+              , msg = {
+                  music : {
+                      tracks: {
+                          '0': { // todo: resolve this dynamically
+                              'notes': {
+                                  'note': note,
+                                  'tone': tone
+                              }
+                          }
+                      }
+                  }
+              };
+              console.log(msg);
+          }, recieve = function(msg) {
+              var notes = music.tracks['0'].notes;
+              $( ["#t-"
+                  , notes.note
+                  , " .n-"
+                  , notes.tone].join('')).addClass("play");
+          };
+
+          $(function(){
+
+              initTracks("#music", 10);
+
+              $("li").live('click', function() {
+                  var e = $(this)
+                  , play = e.hasClass("play");
+                  if(play) e.removeClass("play");
+                  else e.addClass("play");
+                  notify(e, play);
+              });
+
+              var n = 0
+              var i = setInterval(function(){
+                  n++;
+                  $(".n-"+n).addClass("on");
+                  $(":not(.n-"+n+")").removeClass("on");
+                  if(n > conf['time']) n = 0;
+              }, 200);
+
+              if(window.WebSocket) {
+                  var ws = new WebSocket("ws://localhost:8080/channel/test");
+                  ws.onconnect = function(e) {
+                      console.log("connected");
+                  };
+                  ws.onmessage = function(e) {
+                      console.log("msg " + e.data);
+                  };
+                  ws.onclose = function(e) {
+                      console.log("close");
+                  };
+              } else {
+                  alert("Web sockets not supported in your browser. Try CHROME!");
+              }
+
+
+          });
+      })(jQuery);
+    </script>
+  </body>
+</html>
