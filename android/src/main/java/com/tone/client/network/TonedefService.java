@@ -30,8 +30,6 @@ public class TonedefService {
     
     StringBuilder b = new StringBuilder();
     
-    private HttpClient client = new DefaultHttpClient();
-
     public TonedefService() {
 		
     }
@@ -76,6 +74,8 @@ public class TonedefService {
     	try {
     		HttpPost p = new HttpPost("http://10.11.254.241:8080/channel/foo");
     		p.setEntity(new StringEntity(gson.toJson(obj)));
+
+            HttpClient client = new DefaultHttpClient();
 	    	HttpResponse resp = client.execute(p);
 	    	resp.getEntity().consumeContent();
 	    	
