@@ -19,6 +19,8 @@
           conf['notes'] = conf['notes'] || 15;
           conf['tones'] = conf['tones'] || 12;
           conf['host'] = conf['host'] || 'ws://localhost:8080/';
+          conf['solo'] = conf['solo'] || 'solo';
+          var chan = null;
           var T = { /* templates */
               note: function(t, n) { /* a note is an instance of tone within a track */
                   return ['<li class="n-'
@@ -115,7 +117,7 @@
               };
 
               if(ws != null) {
-                  var payload = "foo:" + JSON.stringify(msg);
+                  var payload = [chan, ":", JSON.stringify(msg)].join('');
                   //console.log("pushing " + payload + " to " + conf['host']);
                   ws.send(payload);
               }
@@ -156,13 +158,21 @@
 
           $(function(){
 
+              chan = window.location.hash && window.location.hash.substring(1);
+              chan = chan || conf['solo'];
               addTrack("#music", "1");
+
+              console.log(chan);
 
               $("li").live('click', function(evt) {
                   var n = $(this)
                   , play = n.hasClass("play");
-                  // update UI here, if updating locally
-                  notify(n, evt.shiftKey, !play);
+                  if(chan == conf['solo']) { /* no server required */
+                      if(play) n.removeClass("play");
+                      else n.addClass("play");
+                  } else {
+                       notify(n, evt.shiftKey, !play);
+                  }
               });
 
               var n = 0
@@ -189,7 +199,7 @@
               if(window.WebSocket) {
                   ws = new WebSocket(conf['host']);
                   ws.onopen = function(e) {
-                      ws.send("foo:open");
+                      ws.send(chan + ":open");
                   };
                   ws.onmessage = function(e) {
                       //console.log("recieving " + e.data);
