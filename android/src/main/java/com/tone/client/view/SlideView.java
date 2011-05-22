@@ -8,7 +8,7 @@ import android.view.View;
 
 public class SlideView extends View {
 
-	private int notePosition = 0;
+	private float notePosition = 0;
 	private float rectWidth;
 	private float rectHeight;
 	
@@ -23,7 +23,10 @@ public class SlideView extends View {
 		Paint paint = new Paint();
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(4);
-		canvas.drawLine((notePosition*rectWidth), 0, (notePosition*rectWidth), getHeight(), paint);
+		float dx = notePosition+rectWidth;
+		canvas.translate(dx, 0);
+		canvas.drawLine(0, 0,0, getHeight(), paint);
+		
 	}
 
 	public float getRectWidth() {
@@ -42,11 +45,11 @@ public class SlideView extends View {
 		this.rectHeight = rectHeight;
 	}
 
-	public int getNotePosition() {
+	public float getNotePosition() {
 		return notePosition;
 	}
 
-	public void setNotePosition(int notePosition) {
+	public void setNotePosition(float notePosition) {
 		this.notePosition = notePosition;
 	}
 

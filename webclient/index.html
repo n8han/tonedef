@@ -7,7 +7,7 @@
       * { margin:0; padding:0; }
       #container { width:400px; margin:0 auto; text-align:center; }
       #music ul li { float:left; }
-      h1 { font-family: 'Corben', arial, serif; }
+      h1 { font-family: 'Corben', arial, serif; text-shadow: #ddd 4px 4px 4px; }
       .s {
           height:40px; width:40px; background:#ccc; margin:.25em;
           -webkit-border-radius: 10px;
@@ -34,7 +34,7 @@
       </div>
     </div>
     <div id="audio">
-      <audio id="a" preload="auto">
+      <audio id="a">
         <source src="foo.mp3" type="audio/mpeg" />
       </audio>
     </div>
@@ -42,15 +42,16 @@
       var M = (function($, conf) {
           var conf = conf || {};
           conf['time'] = conf['time'] || 8;
+          conf['host'] = conf['host'] || 'ws://localhost:8080';
           var T = {
-              note: function(n) {
+              note: function(t, n) {
                   return ['<li class="n-'
                           , n
                           , ' s"></li>'].join('');
               },
               track: function(id) {
                   var n = conf['time'], buffer = [];
-                  while(n--) buffer.push(T.note(n));
+                  while(n--) buffer.push(T.note(id, n));
                   return ['<ul class="clearfix" id="t-'
                           , id
                           , '">'
@@ -75,33 +76,60 @@
           }
           , notify = function(jqel, play) {
               if(play) {
-                  $("#a")[0].play();
+                  var aud = $("#a")[0];
+                  aud.play();
+                  var stop = function() { aud.stop(); };
+                  setTimeout(stop,10);
+
               }
-              var tone = idFromCls(jqel, /n-(\d+)/)
-              , note = parseInt(jqel.parent().attr("id").split("-")[1])
+              var note = idFromCls(jqel, /n-(\d+)/)
+              , tone = jqel.parent().attr("id").split("-")[1]
               , msg = {
                   music : {
                       tracks: {
-                          '0': { // todo: resolve this dynamically
-                              'notes': {
-                                  'note': note,
-                                  'tone': tone
-                              }
+                          '0': {
+                              notes : { },
+                              active: true
                           }
                       }
                   }
               };
+
+              var i = conf['time']
+              , tones = play ? [tone] : [];
+
+              while(i--) {
+                  var t = $(["#t-", i, " .n-", note].join(''));
+                  if (t.hasClass('play') && i.toString() !== tone) {
+                      tones.push(i.toString());
+                  }
+              }
+
+              msg.music.tracks['0'].notes[note.toString()] =  {
+                  'tones': tones,
+                  'duration':1
+              };
+
               if(ws != null) {
-                  var payload = "test:" + JSON.stringify(msg);
-                  console.log("sending..." + payload);
+                  var payload = "foo:" + JSON.stringify(msg);
+                  console.log("pushing " + payload);
                   ws.send(payload);
               }
-          }, recieve = function(msg) {
+          }
+          , recieve = function(msg) {
               var notes = msg.music.tracks['0'].notes;
-              $( ["#t-"
-                  , notes.note
-                  , " .n-"
-                  , notes.tone].join('')).addClass("play");
+              for(n in notes) {
+                  var tones = notes[n].tones || [];
+                  // for each notes
+                  $("#music .n-"+n).each(function(i, e) {
+                      var jqel = $(e);
+                      if(tones.filter(function(e) {
+                          return e === jqel.parent().attr("id").split("-")[1];
+                      }).length > 0) {
+                          jqel.addClass("play");
+                      } else jqel.removeClass("play");
+                  });
+              }
           };
 
           $(function(){
@@ -111,8 +139,7 @@
               $("li").live('click', function() {
                   var e = $(this)
                   , play = e.hasClass("play");
-                  //if(play) e.removeClass("play");
-                  //else e.addClass("play");
+                  // update UI here, if updating locally
                   notify(e, !play);
               });
 
@@ -126,12 +153,12 @@
               }, 200);
 
               if(window.WebSocket) {
-                  ws = new WebSocket("ws://localhost:8080");
+                  ws = new WebSocket(conf['host']);
                   ws.onopen = function(e) {
-                      ws.send("test:open");
+                      ws.send("foo:open");
                   };
                   ws.onmessage = function(e) {
-                      console.log("got " + e.data);
+                      console.log("recieving " + e.data);
                       recieve(JSON.parse(e.data));
                   };
                   ws.onclose = function(e) {
@@ -141,7 +168,9 @@
                   alert("Web sockets not supported in your browser. Try CHROME!");
               }
           });
-      })(jQuery);
+      })(jQuery, {
+          'host': 'ws://10.11.254.241:8080'
+      });
     </script>
   </body>
 </html>

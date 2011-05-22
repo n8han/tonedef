@@ -135,13 +135,23 @@ public class GridView extends View implements OnTouchListener {
 			}
 			if(set.contains(squareIndex[1])) {
 				set.remove(squareIndex[1]);
+				onRemove(squareIndex);
 			} else {
+				onAdd(squareIndex);
 				set.add(squareIndex[1]);
 			}
 			refreshDrawableState();
 			postInvalidate();
 		}
 		return false;
+	}
+	
+	protected void onRemove(int[] data) {
+		
+	}
+	
+	protected void onAdd(int[] data) {
+		
 	}
 
 }

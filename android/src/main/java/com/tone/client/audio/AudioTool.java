@@ -26,41 +26,48 @@ public class AudioTool {
 	
 	private int id;
 	
+	private int id() {
+		if(id+1>11) {
+			id = 0;
+		}
+		return id;
+	}
+	
 	public AudioTool(Context context) {
 		soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
 		id = soundPool.load(context, R.raw.fallbackring,1);					
 	}
 	
 	public void a() {
-		play(id, a);
+		play(a);
 	}
 	
 	public void b() {
-		play(id, b);
+		play(b);
 	}
 	
 	public void c() {
-		play(id, c);
+		play(c);
 	}
 	
 	public void d() {
-		play(id,d);
+		play(d);
 	}
 	
 	public void e() {
-		play(id,e);
+		play(e);
 	}
 	
 	public void f() {
-		play(id,f);
+		play(f);
 	}
 	
 	public void g() {
-		play(id,g);
+		play(g);
 	}
 	
-	void play(int id, int chord) {
-		soundPool.play(id,volume,volume,1,0,centToRate(chord));
+	void play(int chord) {
+		soundPool.play(id(),volume,volume,1,0,centToRate(chord));
 	}
 	
 	private float centToRate(int a_value) {
