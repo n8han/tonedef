@@ -1,10 +1,10 @@
 package tonedef.util;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Track {
-  public HashMap<String, Note> notes;
-  public Track(HashMap<String, Note> a_notes) {
+  public Map<String, Note> notes;
+  public Track(Map<String, Note> a_notes) {
     notes = a_notes;
   }
 }
