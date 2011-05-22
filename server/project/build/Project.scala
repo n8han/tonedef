@@ -1,10 +1,11 @@
 import sbt._
 
 class Project(info: ProjectInfo) extends DefaultProject(info) {
-  val uf_version = "0.3.3"
+  val uf_version = "0.3.1"
   
   // unfiltered
-  lazy val ufj = "net.databinder" %% "unfiltered-netty" % uf_version
+  lazy val ufn = "net.databinder" %% "unfiltered-netty" % uf_version
+  lazy val ufw = "net.databinder" %% "unfiltered-websockets" % uf_version
 
   // netty dependencies
   lazy val jboss = "JBoss repository" at 

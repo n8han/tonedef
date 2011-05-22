@@ -1,0 +1,19 @@
+<html>
+<body>
+<script>
+  
+  var s = new WebSocket("ws://127.0.0.1:8080/");
+  s.onmessage = function(e) {
+    alert("message received");
+  }
+  s.onopen = function() {
+    s.send("foo:open");
+  }
+  var test = function() {
+    s.send("foo:{}");
+    return false;
+  }
+</script>
+<input type="submit" onclick="test()" />
+</body>
+</html>
