@@ -11,6 +11,12 @@ class Patcher {
     compact(render(patchJson(parse(original), parse(diff))))
   }
 
+  def patchMusic(original: Music, diff: String): Music = {
+    import net.liftweb.json.{parse}
+    val js = patchJson(jsoner.musicToJson(original), parse(diff))
+    parser.parseMusic(js)
+  }
+
   def patchJson(original: JValue, diff: JValue): JValue = {
     val merged = original merge diff
 

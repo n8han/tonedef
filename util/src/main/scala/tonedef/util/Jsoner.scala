@@ -16,7 +16,7 @@ class Jsoner {
       ("tracks" ->
         (that.tracks.toList map { case (key, value) =>
           (key -> trackToJson(value))
-        })) // tracks
+        }) ) // tracks
     ) // music
   }
 

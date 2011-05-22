@@ -1,13 +1,21 @@
 import net.liftweb.json.JsonAST._
 import org.specs2.mutable._
-import tonedef.util.{Parser, Patcher, Note}
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.JavaConversions._
+import tonedef.util.{Jsoner, Parser, Patcher, Note}
 
 class PatcherSpec extends Specification {
   "the parser" should {
+    val parser = new Parser()
+    "parse string" in {
+      val music = parser.parse(ryansStuff)
+      val jsoner = new Jsoner()
+      val s = jsoner.toJson(music)
+      println(s)
+      music.name must_== "foo"
+    }
+
     "parse music" in {
-      val parser = new Parser()
       val music = parser.parseMusic(original)
 
       music.name must_== "foo"
@@ -74,4 +82,23 @@ class PatcherSpec extends Specification {
       ) // tracks
     ) // music
   }
+
+  def ryansStuff: String = """{"music":{"name":"foo","tracks":{"0":{"notes":{"5":{"tones":[5],"duration":1}},"instrument":"0","active":true}}}}"""
+
+  def originalString: String = """{ "music": {
+    "name": "foo",
+    "tracks": {
+      "0": {
+        "active": true,
+        "instrument": "piano",
+        "notes": {
+          "1":{
+            "tones": [0, 1]
+            },
+          "0": {
+            "tones": [3],
+            "duration":3
+          }
+        }
+      } } }}"""
 }
