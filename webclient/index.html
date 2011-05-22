@@ -1,10 +1,13 @@
 <!DOCYTPE html>
 <html>
   <head>
-    <title></title>
+    <title>tonedef</title>
+    <link href='http://fonts.googleapis.com/css?family=Corben:bold' rel='stylesheet' type='text/css'>
     <style type="text/css">
       * { margin:0; padding:0; }
+      #container { width:400px; margin:0 auto; text-align:center; }
       #music ul li { float:left; }
+      h1 { font-family: 'Corben', arial, serif; }
       .s {
           height:40px; width:40px; background:#ccc; margin:.25em;
           -webkit-border-radius: 10px;
@@ -31,7 +34,9 @@
       </div>
     </div>
     <div id="audio">
-      <!--<audio id="a"><source src="song.mp3" type="audio/mpeg" /></audio>-->
+      <audio id="a" preload="auto">
+        <source src="foo.mp3" type="audio/mpeg" />
+      </audio>
     </div>
     <script type="text/javascript">
       var M = (function($, conf) {
@@ -52,8 +57,14 @@
                           , buffer.reverse().join('')
                           ,'</ul>'].join('');
               }
+          };
+
+          if(!document.createElement('audio').canPlayType) {
+              alert("Audio is not supported in your browser. Try CHROME!");
           }
-          , initTracks = function(sel, n) {
+          var ws = null;
+
+          var initTracks = function(sel, n) {
               var buff = [];
               while(n--) buff.push(T.track(n));
               $(sel).append(buff.reverse().join(''));
@@ -63,6 +74,9 @@
                   return re.test(c); })[0].split('-')[1]);
           }
           , notify = function(jqel, play) {
+              if(play) {
+                  $("#a")[0].play();
+              }
               var tone = idFromCls(jqel, /n-(\d+)/)
               , note = parseInt(jqel.parent().attr("id").split("-")[1])
               , msg = {
@@ -77,9 +91,13 @@
                       }
                   }
               };
-              console.log(msg);
+              if(ws != null) {
+                  var payload = "test:" + JSON.stringify(msg);
+                  console.log("sending..." + payload);
+                  ws.send(payload);
+              }
           }, recieve = function(msg) {
-              var notes = music.tracks['0'].notes;
+              var notes = msg.music.tracks['0'].notes;
               $( ["#t-"
                   , notes.note
                   , " .n-"
@@ -93,9 +111,9 @@
               $("li").live('click', function() {
                   var e = $(this)
                   , play = e.hasClass("play");
-                  if(play) e.removeClass("play");
-                  else e.addClass("play");
-                  notify(e, play);
+                  //if(play) e.removeClass("play");
+                  //else e.addClass("play");
+                  notify(e, !play);
               });
 
               var n = 0
@@ -103,25 +121,25 @@
                   n++;
                   $(".n-"+n).addClass("on");
                   $(":not(.n-"+n+")").removeClass("on");
+                  if($(".n-"+n).hasClass("on")) $("#a")[0].play();
                   if(n > conf['time']) n = 0;
               }, 200);
 
               if(window.WebSocket) {
-                  var ws = new WebSocket("ws://localhost:8080/channel/test");
-                  ws.onconnect = function(e) {
-                      console.log("connected");
+                  ws = new WebSocket("ws://localhost:8080");
+                  ws.onopen = function(e) {
+                      ws.send("test:open");
                   };
                   ws.onmessage = function(e) {
-                      console.log("msg " + e.data);
+                      console.log("got " + e.data);
+                      recieve(JSON.parse(e.data));
                   };
                   ws.onclose = function(e) {
-                      console.log("close");
+
                   };
               } else {
                   alert("Web sockets not supported in your browser. Try CHROME!");
               }
-
-
           });
       })(jQuery);
     </script>
