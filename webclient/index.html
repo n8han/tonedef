@@ -2,8 +2,6 @@
 <html>
   <head>
     <title>tonedef</title>
-    <!--<link href='http://fonts.googleapis.com/css?family=Corben:bold' rel='stylesheet' type='text/css'>-->
-    <!--<link href='http://fonts.googleapis.com/css?family=Cabin+Sketch:bold' rel='stylesheet' type='text/css'>-->
     <link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="app.css"/>
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -39,7 +37,7 @@
           conf['tones'] = conf['tones'] || 12;
           conf['host'] = conf['host'] || 'ws://localhost:8080/';
           conf['solo'] = conf['solo'] || 'solo';
-          var chan = null;
+          var chan = null, mytrk = +new Date();
           var T = { /* templates */
               note: function(t, n) { /* a note is an instance of tone within a track */
               return ['<li class="n-'
@@ -189,7 +187,7 @@
               });
               chan = window.location.hash && window.location.hash.substring(1);
               chan = chan || conf['solo'];
-              addTrack("#music", "1");
+              addTrack("#music", mytrk);
               var ToneMap = {
                   113: 0     // 'q'
                   , 97: 1   // 'a'
@@ -240,7 +238,7 @@
                document.onkeypress = function(evt) {
                   var tone = ToneMap[evt.keyCode];
                   if(tone != undefined) {
-                      var el = $("#trk-1 #t-" + tone + " .n-" + n)
+                      var el = $("#trk-", mytrk, " #t-" + tone + " .n-" + n)
                       , play = el.hasClass('play');
                       if(chan == conf['solo']) {
                           if(play) el.removeClass("play");
