@@ -15,7 +15,7 @@ class PatcherSpec extends Specification {
       val track0 = music.tracks.get("0")
       track0.notes.size must_== 2
       val notes: MMap[String, Note] = track0.notes
-      notes.toString must_== "Map(1 -> Note(Tones(0,), 1), 0 -> Note(Tones(3,), 3))"
+      notes.toString must_== "Map(0 -> Note(Tones(3,), 3), 1 -> Note(Tones(0,), 1))"
     }
   }
 
@@ -31,7 +31,7 @@ class PatcherSpec extends Specification {
     }
 
     "delete a note when tones are empty" in {
-      s must not =~ (""".*"8":\{"tones".*""")
+      s must not =~ (""".*"1":\{"tones".*""")
     }
   }
 

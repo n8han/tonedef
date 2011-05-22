@@ -4,6 +4,15 @@ import net.liftweb.json.JsonAST._
 import scala.collection.mutable
 
 class Parser {
+  def flattenNotes(music: Music): List[(String, String, Note)] = {
+    import scala.collection.JavaConversions._
+    music.tracks.toList flatMap { case (trackName, track) =>
+      track.notes.toList flatMap { case (noteName, note) =>
+        List((trackName, noteName, note))
+      }
+    }
+  }
+
   def parse(s: String): Music = {
     import net.liftweb.json.{parse => parseJValue}
     val json = parseJValue(s)
@@ -14,9 +23,11 @@ class Parser {
     import scala.collection.JavaConversions._
 
     val JObject(music) = json \ "music"
-    val JString(name) = JObject(music) \ "name"
+    val name = (for {
+      JField("name", JString(name)) <- music
+    } yield name).headOption getOrElse {""}
 
-    val tracks = Map((for {
+    val tracks = mutable.Map((for {
       JField("tracks", JObject(tracks)) <- music
       JField(trackName, JObject(track)) <- tracks
     } yield (trackName, track)) map { case (key, value) =>
@@ -32,7 +43,7 @@ class Parser {
       JField("active", JBool(active)) <- json
     } yield active).headOption getOrElse {false}
 
-    val notes = Map((for {
+    val notes = mutable.Map((for {
       JObject(notes) <- json \ "notes"
       JField(noteKey, JObject(note)) <- notes
     } yield (noteKey, note)) map { case (key, value) =>
