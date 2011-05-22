@@ -7,3 +7,7 @@ project/plugins/project/
 android/gen
 android/target
 android/bin
+android/project/boot/
+android/project/plugins/project/
+android/project/plugins/src_managed/
+android/src/main/java/com/tone/client/R.java
