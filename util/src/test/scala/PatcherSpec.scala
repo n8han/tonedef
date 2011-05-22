@@ -1,5 +1,5 @@
-import org.specs2.mutable._
 import net.liftweb.json.JsonAST._
+import org.specs2.mutable._
 import tonedef.util.{Parser, Patcher, Note}
 import scala.collection.mutable.{Map => MMap}
 import scala.collection.JavaConversions._
@@ -15,19 +15,23 @@ class PatcherSpec extends Specification {
       val track0 = music.tracks.get("0")
       track0.notes.size must_== 2
       val notes: MMap[String, Note] = track0.notes
-      // notes.toString must_== "Map(1 -> Note(0, 1), 0 -> Note(3, 3))"
-      1 must_== 1
+      notes.toString must_== "Map(1 -> Note(Tones(0,), 1), 0 -> Note(Tones(3,), 3))"
     }
   }
 
   "the patcher" should {
+    import net.liftweb.json.compact
+    val patcher = new Patcher()
+    val after = patcher patch(original, diff)
+    val s = compact(render(after))
+    println(s)
+
     "merge a patch into an existing music" in {
-      import net.liftweb.json.compact
-      val patcher = new Patcher()
-      val after = patcher patch(original, diff)
-      val s = compact(render(after))
       s must =~ (""".*5.*""")
-      s must not =~ (""".*"1":{"tone".*""")
+    }
+
+    "delete a note when tones are empty" in {
+      s must not =~ (""".*"8":\{"tones".*""")
     }
   }
 
@@ -37,9 +41,11 @@ class PatcherSpec extends Specification {
       ("tracks" ->
         ("0" ->
           ("notes" ->
-            ("1" -> JNull) ~
+            ("1" ->
+              ("tones" -> JArray(Nil))
+            ) ~
             ("5" ->
-              ("tone" -> 4)
+              ("tones" -> JArray(List(JInt(4))))
             )
           ) // notes
         ) // "0"
@@ -57,10 +63,10 @@ class PatcherSpec extends Specification {
           ("instrument" -> "piano") ~
           ("notes" ->
             ("1" ->
-              ("tone" -> 0)
+              ("tones" -> JArray(List(JInt(0))))
             ) ~ // note at 1
             ("0" ->
-              ("tone" -> 3) ~
+              ("tones" -> JArray(List(JInt(3)))) ~
               ("duration" -> 3)
             ) // note at 0
           ) // notes

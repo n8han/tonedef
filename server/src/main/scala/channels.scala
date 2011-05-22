@@ -5,6 +5,7 @@ import unfiltered.response._
 import unfiltered.netty.ReceivedMessage
 import unfiltered.websockets.WebSocket
 
+import org.jboss.netty.util.{Timeout,TimerTask}
 import org.jboss.netty.util.CharsetUtil.UTF_8
 import org.jboss.netty.handler.codec.http.{
   HttpHeaders, DefaultHttpChunk, DefaultHttpChunkTrailer}
@@ -13,8 +14,9 @@ import org.jboss.netty.channel.group.{DefaultChannelGroup, ChannelGroupFuture, C
 import org.jboss.netty.buffer.{ChannelBuffer, ChannelBuffers}
 import org.jboss.netty.channel.{ChannelFuture, ChannelFutureListener}
 import org.clapper.avsl.Logger
+import java.util.concurrent.TimeUnit
 
-class ToneChannel(name: String) {
+class ToneChannel(name: String) extends Implicits {
   val logger = Logger(classOf[ToneChannel])
   val chunks = new DefaultChannelGroup
   val sockets = new DefaultChannelGroup
@@ -22,6 +24,7 @@ class ToneChannel(name: String) {
     logger.info("Shutting down %s...".format(name))
     chunks.write(new DefaultHttpChunkTrailer).await()
   }
+  def size = chunks.size + sockets.size
   def get(message: ReceivedMessage) {
     val initial = message.defaultResponse(Channels.ChunkedJson)
     val ch = message.event.getChannel
@@ -45,10 +48,6 @@ class ToneChannel(name: String) {
     ))
     sockets.write(new DefaultWebSocketFrame(payload))
   }
-  implicit def block2listener[T](block: () => T): ChannelFutureListener =
-    new ChannelFutureListener {
-      def operationComplete(future: ChannelFuture) { block() }
-    }
 }
 object Channels {
   @volatile private var channels = Map.empty[String, ToneChannel]
@@ -62,7 +61,9 @@ object Channels {
       })
     }
   })
+  val timer = new org.jboss.netty.util.HashedWheelTimer
   def shutdown() {
+    timer.stop()
     channels.values.foreach { _.shutdown }
   }
   val ChunkedJson =

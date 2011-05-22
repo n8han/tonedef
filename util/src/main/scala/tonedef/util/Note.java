@@ -11,7 +11,11 @@ public class Note {
   }
 
   public String toString() {
-    String toneString = tones.toString();
+    String toneString = "Tones(";
+    for (int tone: tones) {
+      toneString += tone + ",";
+    }
+    toneString += ")";
     return String.format("Note(%s, %d)", toneString, duration);
   }
 }
