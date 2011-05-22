@@ -8,17 +8,21 @@ class Patcher {
 
   def patchString(original: String, diff: String): String = {
     import net.liftweb.json.{parse, compact}
-    compact(render(patch(parse(original), parse(diff))))
+    compact(render(patchJson(parse(original), parse(diff))))
   }
 
-  def patch(original: JValue, diff: JValue): JValue = {
-    val merged = original merge diff transform {
-      case JField(x, JNull) => JField(x, JNothing)
-    }
+  def patchJson(original: JValue, diff: JValue): JValue = {
+    val merged = original merge diff
+
     val m = parser.parseMusic(merged)
     parser.flattenNotes(parser.parseMusic(diff)) map { case (trackName, noteName, note) =>
-      if (note.tones.size == 0) m.tracks.get(trackName).notes.remove(noteName)
-      else m.tracks.get(trackName).notes.get(noteName).tones = note.tones
+      if (note.tones.size == 0) Option(m.tracks.get(trackName)) map { track =>
+        track.notes.remove(noteName) }
+      else Option(m.tracks.get(trackName)) map { track =>
+        Option(track.notes.get(noteName)) map { note =>
+          note.tones = note.tones
+        }
+      }
     }
     jsoner.musicToJson(m)
   }

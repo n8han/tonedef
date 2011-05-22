@@ -22,7 +22,7 @@ class PatcherSpec extends Specification {
   "the patcher" should {
     import net.liftweb.json.compact
     val patcher = new Patcher()
-    val after = patcher patch(original, diff)
+    val after = patcher patchJson(original, diff)
     val s = compact(render(after))
     println(s)
 

@@ -12,7 +12,7 @@ class Jsoner {
     import net.liftweb.json.JsonDSL._
     import scala.collection.JavaConversions._
     ("music" ->
-      ("name" -> that.name) ~
+      ("name" -> (if (that.name == "") None else Some(that.name))) ~
       ("tracks" ->
         (that.tracks.toList map { case (key, value) =>
           (key -> trackToJson(value))
