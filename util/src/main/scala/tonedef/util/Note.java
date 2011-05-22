@@ -1,14 +1,17 @@
 package tonedef.util;
 
+import java.util.List;
+
 public class Note {
-  public final int tone;
+  public final List<Integer> tones;
   public final int duration;
-  public Note(int a_tone, int a_duration) {
-    tone = a_tone;
+  public Note(List<Integer> a_tones, int a_duration) {
+    tones = a_tones;
     duration = a_duration;
   }
 
   public String toString() {
-    return String.format("Note(%d, %d)", tone, duration);
+    String toneString = tones.toString();
+    return String.format("Note(%s, %d)", toneString, duration);
   }
 }
