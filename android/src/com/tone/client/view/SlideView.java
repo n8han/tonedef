@@ -8,7 +8,7 @@ import android.view.View;
 
 public class SlideView extends View {
 
-	private int notePosition = 0;
+	private float notePosition = 0;
 	private float rectWidth;
 	private float rectHeight;
 	
@@ -42,11 +42,11 @@ public class SlideView extends View {
 		this.rectHeight = rectHeight;
 	}
 
-	public int getNotePosition() {
+	public float getNotePosition() {
 		return notePosition;
 	}
 
-	public void setNotePosition(int notePosition) {
+	public void setNotePosition(float notePosition) {
 		this.notePosition = notePosition;
 	}
 

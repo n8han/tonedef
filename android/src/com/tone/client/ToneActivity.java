@@ -1,5 +1,9 @@
 package com.tone.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import tonedef.util.Track;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Display;
@@ -16,9 +20,11 @@ import com.tone.client.view.SlideView;
 public class ToneActivity extends Activity implements StatusListener {
 	
 	private SlideView slideView;
-	private GridView gridView;
+	private GridView grid;
 	
 	private TonedefService service;
+	
+	private Map<Integer,Track> trackers = new HashMap<Integer,Track>();
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,7 +38,7 @@ public class ToneActivity extends Activity implements StatusListener {
         layout.height = LayoutParams.FILL_PARENT;        
         slideView = new SlideView(this);
         
-        GridView grid = new GridView(this) {
+        grid = new GridView(this) {
 
 			@Override
 			protected void onRectChange() {
@@ -49,14 +55,14 @@ public class ToneActivity extends Activity implements StatusListener {
 
 			@Override
 			public void run() {
-				int notePosition = 0;
+				float notePosition = 0;
 				while(true) {
 					slideView.setNotePosition(notePosition);
 					slideView.refreshDrawableState();
 					slideView.postInvalidate();
 					notePosition++;
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 					}
 				}

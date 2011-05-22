@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eed3si9n</groupId>
-			<artifactId>tonedef-assembly</artifactId>
+			<artifactId>tonedef</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
