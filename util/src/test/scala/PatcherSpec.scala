@@ -20,13 +20,18 @@ class PatcherSpec extends Specification {
   }
 
   "the patcher" should {
+    import net.liftweb.json.compact
+    val patcher = new Patcher()
+    val after = patcher patch(original, diff)
+    val s = compact(render(after))
+    println(s)
+
     "merge a patch into an existing music" in {
-      import net.liftweb.json.compact
-      val patcher = new Patcher()
-      val after = patcher patch(original, diff)
-      val s = compact(render(after))
       s must =~ (""".*5.*""")
-      s must not =~ (""".*"1":{"tones".*""")
+    }
+
+    "delete a note when tones are empty" in {
+      s must not =~ (""".*"8":\{"tones".*""")
     }
   }
 
@@ -36,7 +41,9 @@ class PatcherSpec extends Specification {
       ("tracks" ->
         ("0" ->
           ("notes" ->
-            ("1" -> JNull) ~
+            ("1" ->
+              ("tones" -> JArray(Nil))
+            ) ~
             ("5" ->
               ("tones" -> JArray(List(JInt(4))))
             )
