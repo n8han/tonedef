@@ -60,7 +60,7 @@
                           , id
                           ,'"><p>track '
                           , id
-                          , '!</p>'
+                          , '</p>'
                           , buff.reverse().join('')
                           ,'</div>'].join('');
               }
@@ -185,6 +185,7 @@
                   if(info.is(":visible")) info.slideUp("fast");
                   else info.slideDown("fast");
               });
+
               chan = window.location.hash && window.location.hash.substring(1);
               chan = chan || conf['solo'];
               addTrack("#music", mytrk);
